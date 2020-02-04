@@ -70,40 +70,54 @@ pdfExtract.extract('./files/First_work.pdf', options, (err, data) => {
     if (err) return console.log(err);
     console.log(data.pages[1].content.length);
     var cube = data.pages[1].content.slice(1, 46);
-    
-    for (i = initial; i <= initial + 2; i++) {
-      console.log(xAxis, yAxis, imageHeight, imageWidth, radius)
-        ctx.fillStyle = color[cube[i].str];
-        roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
-        xAxis += 39;
+
+    for (j = 0; j < cube.length / 3; j = j + 3) {
+        initial = j
+        console.log(initial);
+        xAxis = 2;
+        yAxis = 2;
+        //Start: canvas for each rubik cube
+        for (i = initial; i <= initial + 2; i++) {
+            
+            ctx.fillStyle = color[cube[i].str];
+            roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
+            xAxis += 39;
+        }
+
+        xAxis = 2;
+        yAxis += 39;
+        initial += 15;
+        for (var i = initial; i <= initial + 2; i++) {
+
+            ctx.fillStyle = color[cube[i].str];
+            roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
+            xAxis += 39;
+        }
+
+        xAxis = 2;
+        yAxis += 39;
+        initial += 15;
+        for (var i = initial; i <= initial + 2; i++) {
+            console.log(color[cube[i].str] , xAxis, yAxis , initial , i)
+            ctx.fillStyle = color[cube[i].str];
+            roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
+            xAxis += 39;
+        }
+        //End: canvas for each rubik cube
+        const buffer = canvas.toBuffer("image/png");
+        fs.writeFileSync("test" + j + ".png", buffer);
+
     }
 
-    xAxis = 2;
-    yAxis += 39;
-    initial += 15;
-    for (var i = initial; i <= initial + 2; i++) {
-
-        ctx.fillStyle = color[cube[i].str];
-        roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
-        xAxis += 39;
-    }
-
-    xAxis = 2;
-    yAxis += 39;
-    for (var i = initial; i <= initial + 2; i++) {
-        ctx.fillStyle = color[cube[i].str];
-        roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
-        xAxis += 39;
-    }
-
-    const buffer = canvas.toBuffer("image/png");
-    fs.writeFileSync("test.png", buffer);
 
 
-    // fs.writeFile("data.json", JSON.stringify(data.pages[1].content.slice(1, 10)), (err) => {
-    //     if (err) throw err;
-    //     console.log('Data written to file');
-    // });
+
+
+
+    fs.writeFile("data.json", JSON.stringify(data.pages[1].content.slice(1, 46)), (err) => {
+        if (err) throw err;
+        console.log('Data written to file');
+    });
 });
 
 
