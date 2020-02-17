@@ -1,3 +1,4 @@
+let page = +process.argv[2];
 const color = {
     G: "rgb(21, 251, 0)",
     B: "rgb(31, 1, 255)",
@@ -5,8 +6,8 @@ const color = {
     R: "rgb(199, 8, 5)",
     Y: "rgb(246, 251, 0)",
     W: "rgb(226, 221, 221)"
+};
 
-}
 const
     fs = require("fs"),
     { createCanvas } = require("canvas");
@@ -66,20 +67,53 @@ const radius = 5;
 const options = {}; /* see below */
 let initial = 0;
 
+function giveFolder(str, totalPieces) {
+    let folders = [];
+    let lines = Math.sqrt(totalPieces) / 3;
+    let startingPoint = (((+str.substring(1))-1)*lines)+1;
+    for (i = startingPoint; i < startingPoint+lines; i++) {
+        folders.push(i);
+    };
+    return folders;
+}
+
+function giveNumber(str , totalPieces){
+    let lines = Math.sqrt(totalPieces) / 3;
+    var num = str.split("").filter(ele=>{
+        if(isNaN(+ele)) return true;
+    })
+
+    var ch = num[0];
+    var index = 0;
+
+    var first = ((ch.charCodeAt(index)-65)*lines)+1;
+    return first;
+    
+
+}
+
 pdfExtract.extract('./files/First_work.pdf', options, (err, data) => {
     if (err) return console.log(err);
-    console.log(data.pages[1].content.length);
-    var cube = data.pages[1].content.slice(1, 46);
-
-    for (j = 0; j < cube.length / 3; j = j + 3) {
-        initial = j
-        console.log(initial);
+    var cubes = data.pages[1].content.slice(1, data.pages[1].content.length);
+    var folders = giveFolder(data.pages[1].content.slice(0, 1)[0].str, cubes.length);
+    var firstNum = giveNumber(data.pages[1].content.slice(0, 1)[0].str, cubes.length);
+    var cubeNumber = firstNum;
+    var count =0;
+    var num = [];
+    for (j = 0; j < cubes.length ; j = j + 3) {
+        if(num.includes(j)){
+            continue;
+        };
+        if(j%5 == 0 & j!=0){ 
+            count++
+        };
+        initial = j;
         xAxis = 2;
         yAxis = 2;
         //Start: canvas for each rubik cube
         for (i = initial; i <= initial + 2; i++) {
-            
-            ctx.fillStyle = color[cube[i].str];
+            num.push(i);
+            ctx.fillStyle = color[cubes[i].str];
             roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
             xAxis += 39;
         }
@@ -88,8 +122,8 @@ pdfExtract.extract('./files/First_work.pdf', options, (err, data) => {
         yAxis += 39;
         initial += 15;
         for (var i = initial; i <= initial + 2; i++) {
-
-            ctx.fillStyle = color[cube[i].str];
+            num.push(i);
+            ctx.fillStyle = color[cubes[i].str];
             roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
             xAxis += 39;
         }
@@ -98,23 +132,23 @@ pdfExtract.extract('./files/First_work.pdf', options, (err, data) => {
         yAxis += 39;
         initial += 15;
         for (var i = initial; i <= initial + 2; i++) {
-            console.log(color[cube[i].str] , xAxis, yAxis , initial , i)
-            ctx.fillStyle = color[cube[i].str];
+            num.push(i);
+            ctx.fillStyle = color[cubes[i].str];
             roundRect(ctx, xAxis, yAxis, imageHeight, imageWidth, radius, true);
             xAxis += 39;
         }
         //End: canvas for each rubik cube
         const buffer = canvas.toBuffer("image/png");
-        fs.writeFileSync("test" + j + ".png", buffer);
+        fs.writeFileSync("Result/" + folders[count] + "-"+cubeNumber+".png", buffer);
+        cubeNumber++;
+        if((cubeNumber-1)%5 == 0){
+            cubeNumber = firstNum;
+        }
+        
 
     }
 
-
-
-
-
-
-    fs.writeFile("data.json", JSON.stringify(data.pages[1].content.slice(1, 46)), (err) => {
+    fs.writeFile("data.json", JSON.stringify(data.pages[1].content.slice(0, 1)), (err) => {
         if (err) throw err;
         console.log('Data written to file');
     });
