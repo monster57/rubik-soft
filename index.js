@@ -94,9 +94,9 @@ function giveNumber(str , totalPieces){
 
 pdfExtract.extract('./files/First_work.pdf', options, (err, data) => {
     if (err) return console.log(err);
-    var cubes = data.pages[1].content.slice(1, data.pages[1].content.length);
-    var folders = giveFolder(data.pages[1].content.slice(0, 1)[0].str, cubes.length);
-    var firstNum = giveNumber(data.pages[1].content.slice(0, 1)[0].str, cubes.length);
+    var cubes = data.pages[page].content.slice(1, data.pages[1].content.length);
+    var folders = giveFolder(data.pages[page].content.slice(0, 1)[0].str, cubes.length);
+    var firstNum = giveNumber(data.pages[page].content.slice(0, 1)[0].str, cubes.length);
     var cubeNumber = firstNum;
     var count =0;
     var num = [];
